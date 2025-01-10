@@ -1,0 +1,28 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%environment
+	. /opt/conda/etc/profile.d/conda.sh
+	conda activate idops
+%post
+	apt update
+	apt -y upgrade
+	conda create -n idops -c gamb-go -c bioconda idops
+        . /opt/conda/etc/profile.d/conda.sh	
+	/opt/conda/bin/conda init
+	conda activate idops
+	idops --help
+	
+	NOW=`date`
+	echo "export NOW=\"${NOW}\"" >> $SINGULARITY_ENVIRONMENT
+
+%runscript
+	echo "Container was created $NOW"
+    	echo "Arguments received: $*"
+	exec "$@"
+
+%labels
+	Author UCR StaffHPC
+	Version 0.2.2
+	email soporte.hpc@ucr.ac.cr
+	Contiene IDOPS
