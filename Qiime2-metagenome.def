@@ -1,0 +1,38 @@
+Bootstrap: docker
+From: ubuntu
+
+%environment
+	. /opt/miniconda3/etc/profile.d/conda.sh 
+	conda activate qiime2-metagenome-2024.5
+%post
+	#Actualizacion de Ubuntu
+	apt update
+	apt -y upgrade
+	apt -y install wget curl
+
+	#Instalacion de Miniconda en /opt
+	mkdir -p /opt/miniconda3
+	wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /opt/miniconda3/miniconda.sh
+	bash /opt/miniconda3/miniconda.sh -b -u -p /opt/miniconda3
+	rm /opt/miniconda3/miniconda.sh
+
+	#Activacion de Anaconda
+	. /opt/miniconda3/etc/profile.d/conda.sh
+    	conda activate
+
+	#Instalacion Qiime2-Metagenome
+	conda env create -n qiime2-metagenome-2024.5 --file https://data.qiime2.org/distro/metagenome/qiime2-metagenome-2024.5-py39-linux-conda.yml
+
+	NOW=`date`
+	echo "export NOW=\"${NOW}\"" >> $SINGULARITY_ENVIRONMENT
+
+%runscript
+	echo "Container was created $NOW"
+    	echo "Arguments received: $*"
+	exec "$@"
+
+%labels
+	Author UCR StaffHPC
+	Version 2024.5
+	email soporte.hpc@ucr.ac.cr
+	Contiene Qiime2-Metagenome
