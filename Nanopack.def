@@ -1,0 +1,23 @@
+Bootstrap: docker
+From: continuumio/anaconda3
+
+%environment
+%post
+	apt update
+	apt -y upgrade
+	apt -y install gcc
+        pip install nanopack
+
+	NOW=`date`
+	echo "export NOW=\"${NOW}\"" >> $SINGULARITY_ENVIRONMENT
+
+%runscript
+	echo "Container was created $NOW"
+    	echo "Arguments received: $*"
+	exec "$@"
+
+%labels
+	Author UCR StaffHPC
+	Version 
+	email soporte.hpc@ucr.ac.cr
+	Contiene Nanopack
