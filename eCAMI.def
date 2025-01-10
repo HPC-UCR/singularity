@@ -1,0 +1,30 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%environment
+	cd /opt/eCAMI/
+%post
+	apt update
+	apt -y upgrade
+	cd /opt/
+	git clone https://github.com/yinlabniu/eCAMI.git
+	cd eCAMI/
+	export PATH=$PATH:/opt/eCAMI
+	pip install scipy
+	pip install argparse
+	pip install psutil
+	pip install numpy
+	
+	NOW=`date`
+	echo "export NOW=\"${NOW}\"" >> $SINGULARITY_ENVIRONMENT
+
+%runscript
+	echo "Container was created $NOW"
+    	echo "Arguments received: $*"
+	exec "$@"
+
+%labels
+	Author UCR StaffHPC
+	Version 
+	email soporte.hpc@ucr.ac.cr
+	Contiene eCAMI
