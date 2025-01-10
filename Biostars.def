@@ -1,0 +1,43 @@
+Bootstrap: docker
+From: ubuntu
+
+%environment
+	. /opt/miniconda3/etc/profile.d/conda.sh 
+	conda activate bioinfo
+
+%post
+	#Actualizacion de Ubuntu
+	apt update
+	apt -y upgrade
+	apt -y install wget curl
+
+	#Instalacion de Miniconda en /opt
+	mkdir -p /opt/miniconda3
+	wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /opt/miniconda3/miniconda.sh
+	bash /opt/miniconda3/miniconda.sh -b -u -p /opt/miniconda3
+	rm /opt/miniconda3/miniconda.sh
+
+	#Activacion de Anaconda
+	. /opt/miniconda3/etc/profile.d/conda.sh
+    	conda activate
+
+	#Instalacion de Biostars
+	conda config --add channels bioconda
+	conda config --add channels conda-forge
+	conda create -y --name bioinfo python=3.6
+	conda activate bioinfo
+        curl http://data.biostarhandbook.com/install/conda.txt | xargs conda install -y
+	
+	NOW=`date`
+	echo "export NOW=\"${NOW}\"" >> $SINGULARITY_ENVIRONMENT
+
+%runscript
+	echo "Container was created $NOW"
+    	echo "Arguments received: $*"
+	exec "$@"
+
+%labels
+	Author UCR StaffHPC
+	Version 0.0.1
+	email soporte.hpc@ucr.ac.cr
+	Contiene Biostars
